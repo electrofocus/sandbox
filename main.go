@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -8,6 +9,10 @@ import (
 )
 
 func main() {
+	var version string
+	flag.StringVar(&version, "go", "1.20", "Go module version")
+	flag.Parse()
+
 	path, err := os.MkdirTemp("", "sandbox_*")
 	if err != nil {
 		fmt.Printf("can't create temporary directory (%s)", err)
@@ -37,8 +42,9 @@ func main() {
 	defer f2.Close()
 	f2.WriteString(`module sandbox
 
-go 1.20
-`)
+go `)
+	f2.WriteString(version)
+	f2.WriteString("\n")
 
 	if _, err := exec.Command("code", path, "--goto", f1.Name()+":4:2").Output(); err != nil {
 		fmt.Printf("can't get command output (%s)", err)
