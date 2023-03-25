@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,10 +8,6 @@ import (
 )
 
 func main() {
-	var version string
-	flag.StringVar(&version, "go", "1.20", "Go module version")
-	flag.Parse()
-
 	path, err := os.MkdirTemp("", "sandbox_*")
 	if err != nil {
 		fmt.Printf("can't create temporary directory (%s)", err)
@@ -33,21 +28,26 @@ func main() {
 }
 `)
 
-	f2, err := os.Create(filepath.Join(path, "go.mod"))
-	if err != nil {
-		fmt.Printf("can't create go.mod file (%s)", err)
+	os.Chdir(path)
+	execCmd("go", "mod", "init", "sandbox")
+
+	if editor := os.Getenv("EDITOR"); editor != "" {
+		execCmd(editor, f1.Name())
 		return
 	}
 
-	defer f2.Close()
-	f2.WriteString(`module sandbox
+	execCmd("code", path, "--goto", f1.Name()+":4:2")
+}
 
-go `)
-	f2.WriteString(version)
-	f2.WriteString("\n")
+func execCmd(name string, args ...string) {
+	cmd := exec.Command(name, args...)
 
-	if _, err := exec.Command("code", path, "--goto", f1.Name()+":4:2").Output(); err != nil {
-		fmt.Printf("can't get command output (%s)", err)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		fmt.Printf("can't exec command %q (%s)\n", name, err)
 		return
 	}
 }
