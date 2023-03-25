@@ -13,7 +13,7 @@ With a [correctly configured](https://go.dev/doc/install#testing) Go toolchain r
 go install github.com/electrofocus/sandbox@latest
 ```
 ## Use
-To open editor run
+To open editor with fresh project run
 ```
 sandbox
 ```
