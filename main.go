@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	path, err := os.MkdirTemp("", "playground*")
+	path, err := os.MkdirTemp("", "sandbox_*")
 	if err != nil {
 		fmt.Printf("can't create temporary directory (%s)", err)
 		return
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	defer f2.Close()
-	f2.WriteString(`module playground
+	f2.WriteString(`module sandbox
 
 go 1.20
 `)

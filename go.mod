@@ -1,3 +1,3 @@
-module play
+module sandbox
 
 go 1.20
