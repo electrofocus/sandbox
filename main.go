@@ -31,12 +31,12 @@ func main() {
 	os.Chdir(path)
 	execCmd("go", "mod", "init", "sandbox")
 
-	if editor := os.Getenv("EDITOR"); editor != "" {
+	if editor := os.Getenv("EDITOR"); editor != "" && editor != "code" {
 		execCmd(editor, f1.Name())
 		return
 	}
 
-	execCmd("code", path, "--goto", f1.Name()+":4:2")
+	execCmd("code", path, "--new-window", "--goto", f1.Name()+":4:2")
 }
 
 func execCmd(name string, args ...string) {
