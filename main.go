@@ -8,35 +8,40 @@ import (
 )
 
 func main() {
-	path, err := os.MkdirTemp("", "sandbox_*")
+	var dir string
+	if len(os.Args) > 1 {
+		dir = os.Args[1]
+	}
+
+	dir, err := os.MkdirTemp(dir, "sandbox_*")
 	if err != nil {
 		fmt.Printf("can't create temporary directory (%s)", err)
 		return
 	}
 
-	f1, err := os.Create(filepath.Join(path, "main.go"))
+	f, err := os.Create(filepath.Join(dir, "main.go"))
 	if err != nil {
 		fmt.Printf("can't create main.go file (%s)", err)
 		return
 	}
 
-	defer f1.Close()
-	f1.WriteString(`package main
+	defer f.Close()
+	f.WriteString(`package main
 
 func main() {
 	
 }
 `)
 
-	os.Chdir(path)
+	os.Chdir(dir)
 	execCmd("go", "mod", "init", "sandbox")
 
 	if editor := os.Getenv("EDITOR"); editor != "" {
-		execCmd(editor, f1.Name())
+		execCmd(editor, f.Name())
 		return
 	}
 
-	execCmd("code", path, "--goto", f1.Name()+":4:2")
+	execCmd("code", dir, "--goto", f.Name()+":4:2")
 }
 
 func execCmd(name string, args ...string) {

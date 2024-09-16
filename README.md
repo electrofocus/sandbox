@@ -17,3 +17,8 @@ To open editor with fresh project run
 ```
 sandbox
 ```
+
+By default, project is located in temporary directory. Pass a path to existing directory as command argument to use custom location for project
+```
+sandbox /Users/John/Documents
+```
